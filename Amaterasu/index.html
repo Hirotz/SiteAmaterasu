@@ -1,0 +1,540 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Amaterasu</title>
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="css/slider1_container.css">
+
+<script src="javascript/jquery-1.9.1.min.js"></script>
+<script src="javascript/jssor.js"></script>
+<script src="javascript/jssor.slider.js"></script>
+
+ <script>
+        jQuery(document).ready(function ($) {
+
+            var _CaptionTransitions = [];
+            _CaptionTransitions["L"] = { $Duration: 900, x: 0.6, $Easing: { $Left: $JssorEasing$.$EaseInOutSine }, $Opacity: 2 };
+            _CaptionTransitions["R"] = { $Duration: 900, x: -0.6, $Easing: { $Left: $JssorEasing$.$EaseInOutSine }, $Opacity: 2 };
+            _CaptionTransitions["T"] = { $Duration: 900, y: 0.6, $Easing: { $Top: $JssorEasing$.$EaseInOutSine }, $Opacity: 2 };
+            _CaptionTransitions["B"] = { $Duration: 900, y: -0.6, $Easing: { $Top: $JssorEasing$.$EaseInOutSine }, $Opacity: 2 };
+            _CaptionTransitions["ZMF|10"] = { $Duration: 900, $Zoom: 11, $Easing: { $Zoom: $JssorEasing$.$EaseOutQuad, $Opacity: $JssorEasing$.$EaseLinear }, $Opacity: 2 };
+            _CaptionTransitions["RTT|10"] = { $Duration: 900, $Zoom: 11, $Rotate: 1, $Easing: { $Zoom: $JssorEasing$.$EaseOutQuad, $Opacity: $JssorEasing$.$EaseLinear, $Rotate: $JssorEasing$.$EaseInExpo }, $Opacity: 2, $Round: { $Rotate: 0.8} };
+            _CaptionTransitions["RTT|2"] = { $Duration: 900, $Zoom: 3, $Rotate: 1, $Easing: { $Zoom: $JssorEasing$.$EaseInQuad, $Opacity: $JssorEasing$.$EaseLinear, $Rotate: $JssorEasing$.$EaseInQuad }, $Opacity: 2, $Round: { $Rotate: 0.5} };
+            _CaptionTransitions["RTTL|BR"] = { $Duration: 900, x: -0.6, y: -0.6, $Zoom: 11, $Rotate: 1, $Easing: { $Left: $JssorEasing$.$EaseInCubic, $Top: $JssorEasing$.$EaseInCubic, $Zoom: $JssorEasing$.$EaseInCubic, $Opacity: $JssorEasing$.$EaseLinear, $Rotate: $JssorEasing$.$EaseInCubic }, $Opacity: 2, $Round: { $Rotate: 0.8} };
+            _CaptionTransitions["CLIP|LR"] = { $Duration: 900, $Clip: 15, $Easing: { $Clip: $JssorEasing$.$EaseInOutCubic }, $Opacity: 2 };
+            _CaptionTransitions["MCLIP|L"] = { $Duration: 900, $Clip: 1, $Move: true, $Easing: { $Clip: $JssorEasing$.$EaseInOutCubic} };
+            _CaptionTransitions["MCLIP|R"] = { $Duration: 900, $Clip: 2, $Move: true, $Easing: { $Clip: $JssorEasing$.$EaseInOutCubic} };
+
+            var options = {
+                $FillMode: 2,                                       //[Optional] The way to fill image in slide, 0 stretch, 1 contain (keep aspect ratio and put all inside slide), 2 cover (keep aspect ratio and cover whole slide), 4 actual size, 5 contain for large image, actual size for small image, default value is 0
+                $AutoPlay: true,                                    //[Optional] Whether to auto play, to enable slideshow, this option must be set to true, default value is false
+                $AutoPlayInterval: 4000,                            //[Optional] Interval (in milliseconds) to go for next slide since the previous stopped if the slider is auto playing, default value is 3000
+                $PauseOnHover: 1,                                   //[Optional] Whether to pause when mouse over if a slider is auto playing, 0 no pause, 1 pause for desktop, 2 pause for touch device, 3 pause for desktop and touch device, 4 freeze for desktop, 8 freeze for touch device, 12 freeze for desktop and touch device, default value is 1
+
+                $ArrowKeyNavigation: true,   			            //[Optional] Allows keyboard (arrow key) navigation or not, default value is false
+                $SlideEasing: $JssorEasing$.$EaseOutQuint,          //[Optional] Specifies easing for right to left animation, default value is $JssorEasing$.$EaseOutQuad
+                $SlideDuration: 500,                               //[Optional] Specifies default duration (swipe) for slide in milliseconds, default value is 500
+                $MinDragOffsetToSlide: 20,                          //[Optional] Minimum drag offset to trigger slide , default value is 20
+                $SlideWidth: 900,                                 //[Optional] Width of every slide in pixels, default value is width of 'slides' container
+                $SlideHeight: 305,                                //[Optional] Height of every slide in pixels, default value is height of 'slides' container
+                $SlideSpacing: 0, 					                //[Optional] Space between each slide in pixels, default value is 0
+                $DisplayPieces: 1,                                  //[Optional] Number of pieces to display (the slideshow would be disabled if the value is set to greater than 1), the default value is 1
+                $ParkingPosition: 0,                                //[Optional] The offset position to park slide (this options applys only when slideshow disabled), default value is 0.
+                $UISearchMode: 1,                                   //[Optional] The way (0 parellel, 1 recursive, default value is 1) to search UI components (slides container, loading screen, navigator container, arrow navigator container, thumbnail navigator container etc).
+                $PlayOrientation: 1,                                //[Optional] Orientation to play slide (for auto play, navigation), 1 horizental, 2 vertical, 5 horizental reverse, 6 vertical reverse, default value is 1
+                $DragOrientation: 1,                                //[Optional] Orientation to drag slide, 0 no drag, 1 horizental, 2 vertical, 3 either, default value is 1 (Note that the $DragOrientation should be the same as $PlayOrientation when $DisplayPieces is greater than 1, or parking position is not 0)
+
+                $CaptionSliderOptions: {                            //[Optional] Options which specifies how to animate caption
+                    $Class: $JssorCaptionSlider$,                   //[Required] Class to create instance to animate caption
+                    $CaptionTransitions: _CaptionTransitions,       //[Required] An array of caption transitions to play caption, see caption transition section at jssor slideshow transition builder
+                    $PlayInMode: 1,                                 //[Optional] 0 None (no play), 1 Chain (goes after main slide), 3 Chain Flatten (goes after main slide and flatten all caption animations), default value is 1
+                    $PlayOutMode: 3                                 //[Optional] 0 None (no play), 1 Chain (goes before main slide), 3 Chain Flatten (goes before main slide and flatten all caption animations), default value is 1
+                },
+
+                $BulletNavigatorOptions: {                          //[Optional] Options to specify and enable navigator or not
+                    $Class: $JssorBulletNavigator$,                 //[Required] Class to create navigator instance
+                    $ChanceToShow: 2,                               //[Required] 0 Never, 1 Mouse Over, 2 Always
+                    $AutoCenter: 0,                                 //[Optional] Auto center navigator in parent container, 0 None, 1 Horizontal, 2 Vertical, 3 Both, default value is 0
+                    $Steps: 1,                                      //[Optional] Steps to go for each navigation request, default value is 1
+                    $Lanes: 1,                                      //[Optional] Specify lanes to arrange items, default value is 1
+                    $SpacingX: 0,                                   //[Optional] Horizontal space between each item in pixel, default value is 0
+                    $SpacingY: 8,                                   //[Optional] Vertical space between each item in pixel, default value is 0
+                    $Orientation: 1                                 //[Optional] The orientation of the navigator, 1 horizontal, 2 vertical, default value is 1
+                },
+
+                $ArrowNavigatorOptions: {                           //[Optional] Options to specify and enable arrow navigator or not
+                    $Class: $JssorArrowNavigator$,                  //[Requried] Class to create arrow navigator instance
+                    $ChanceToShow: 1,                               //[Required] 0 Never, 1 Mouse Over, 2 Always
+                    $AutoCenter: 0,                                 //[Optional] Auto center arrows in parent container, 0 No, 1 Horizontal, 2 Vertical, 3 Both, default value is 0
+                    $Steps: 1                                       //[Optional] Steps to go for each navigation request, default value is 1
+                }
+            };
+
+            var jssor_slider1 = new $JssorSlider$("slider1_container", options);
+
+            //responsive code begin
+            //you can remove responsive code if you don't want the slider scales while window resizes
+            function ScaleSlider() {
+                var bodyWidth = document.body.clientWidth;
+                if (bodyWidth)
+                    jssor_slider1.$ScaleWidth(Math.min(bodyWidth, 900));
+                else
+                    window.setTimeout(ScaleSlider, 30);
+            }
+            ScaleSlider();
+
+            $(window).bind("load", ScaleSlider);
+            $(window).bind("resize", ScaleSlider);
+            $(window).bind("orientationchange", ScaleSlider);
+            //responsive code end
+        });
+    </script>
+
+
+
+<link rel="shortcut icon" href="images/Logo Amaterasu -favicon.png" />
+<style type="text/css">
+body {
+	margin: 0px;
+	background-color: #732337;
+	font-family: Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+p {
+	padding: 0px;
+	margin: 0px;
+}
+#container {
+	width: 900px;
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+	background-color: #FFFFFF;
+}
+#cabecalho {
+	height: 235px;
+	background-color: #A01E1E;
+	background-image: url(images/img_cabecalho_novo.jpg);
+}
+
+#menu {
+	height: 27px;
+	width: 900px;
+	text-align: center;
+	line-height: 26px;
+	position: absolute;
+	left: 1px;
+	top: 207px;
+	}
+#menu ul {
+	padding: 0px;
+	margin: 0px;
+	list-style-type: none;
+		border-right: 1px; solid #000000
+}
+
+#menu ul li {
+	display: block;
+	width: 85px;
+	height: 27px;
+	color: #000000;
+	text-decoration: none;
+	float: left;
+	position:relative;
+}
+
+#menu ul li ul {
+	position: absolute;
+	left: 0px;
+	display: none;
+	z-index: 1;
+	position: absolute;
+	background-color: rgba(255,255,255,0.80);
+}
+#menu li:hover {
+	background-color: #FBF8F8;
+	width: 85px;
+	height: 27px;
+}
+#menu ul a {
+	text-decoration:none;
+	display: block;
+	color: #000000;
+}
+#menu li:hover ul {
+	display: block;
+}
+
+#slide {
+	height: 305px;
+}
+#colunaE {
+	height: 625px;
+	width: 300px;
+	float: left;
+	background-color: #262823;
+}
+#colunaE a {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+#colunaE h3 {
+	margin-bottom: -40px;
+	margin-left: 15px;
+	color: #FFFFFF;
+}
+#colunaE img {
+	margin-left: 15px;
+	margin-top: 50px;
+}
+#colunaC {
+	height: 625px;
+	width: 300px;
+	float: left;
+	background-color: #262823;
+}
+#colunaC a {
+	text-decoration: none;
+}
+#colunaC img {
+	margin-left: 15px;
+	margin-top: 50px;
+}
+#colunaD {
+	height: 625px;
+	width: 300px;
+	float: left;
+	background-color: #7D838E;
+}
+#colunaD a {
+	text-decoration: none;
+}
+#colunaD h3 {
+	margin-bottom: -40px;
+	margin-left: 15px;
+	color: #FFFFFF;
+}
+#colunaD img {
+	margin-left: 15px;
+	margin-top: 50px;
+}
+#rodape {
+	clear: both;
+	height: 90px;
+	background-color: #1D1E25;
+	padding-bottom: 25px;
+	position: relative;
+}
+#rodape p {
+	font-weight: bold;
+	font-size: small;
+}
+#social  {
+	position: absolute;
+	left: 657px;
+	top: 50px;
+}
+
+#bnt_universal {
+	height: 35px;
+	width: 270px;
+	margin-left: 15px;
+	margin-top: 15px;
+}
+#bnt_universal p {
+	margin-left: 40px;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+#bnt_universal  h6  {
+	margin-top: 0px;
+	color: #FFFFFF;
+	text-decoration: none;
+	margin-left: 205px;
+}
+#bnt_tokyo {
+	display: block;
+	height: 35px;
+	width: 270px;
+	margin-left: 15px;
+	margin-top: 15px;
+}
+#bnt_tokyo p {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin-left: 70px;
+}
+#bnt_tokyo  h6  {
+	margin-top: 0px;
+	color: #FFFDFD;
+	margin-left: 205px;
+	text-decoration: none;
+}
+#bnt_disneyland {
+	display: block;
+	height: 35px;
+	width: 270px;
+	margin-left: 15px;
+	margin-top: 15px;
+}
+#bnt_disneyland p {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin-left: 65px;
+}
+#bnt_disneyland h6 {
+	margin-top: 0px;
+	margin-left: 205px;
+	color: #FCFCFC;
+}
+#bnt_osaka {
+	display: block;
+	height: 35px;
+	width: 270px;
+	margin-left: 15px;
+	margin-top: 15px;
+}
+#bnt_osaka p {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin-left: 75px;
+}
+#bnt_osaka h6 {
+	margin-top: 0px;
+	margin-left: 205px;
+	color: #FFFFFF;
+}
+#bnt_castelo {
+	display: block;
+	height: 35px;
+	width: 270px;
+	margin-left: 15px;
+	margin-top: 15px;
+}
+#bnt_castelo p {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin-left: 7px;
+}
+#bnt_castelo h6 {
+	color: #FFFFFF;
+	margin-top: 0px;
+	margin-left: 205px;
+}
+#bnt_santuario {
+	display: block;
+	height: 35px;
+	width: 270px;
+	margin-left: 15px;
+	margin-top: 15px;
+}
+#bnt_santuario p {
+	color: #FFFFFF;
+	font-weight: bold;
+	margin-left: 5px;
+}
+#bnt_santuario h6 {
+	color: #FFFFFF;
+	margin-top: 0px;
+	margin-left: 205px;
+}
+#amaterasu2015 {
+	height: 30px;
+	width: 295px;
+	position: absolute;
+	left: 296px;
+	top: 50px;
+}
+.bnt_tokyo {
+	-webkit-transition: all 0.5s ease 0s;
+	-o-transition: all 0.5s ease 0s;
+	transition: all 0.5s ease 0s;
+	background-image: url(images/bnt_tokyo.jpg);
+	display: block;
+	width: 270px;
+	height: 35px;
+	float: left;
+}
+.bnt_disneyland {
+	-webkit-transition: all 0.5s ease 0s;
+	-o-transition: all 0.5s ease 0s;
+	transition: all 0.5s ease 0s;
+	background-image: url(images/bnt_disneyland.jpg);
+	display: block;
+	width: 270px;
+	height: 35px;
+	float: left;
+}
+.bnt_universal {
+	-webkit-transition: all 0.5s ease 0s;
+	-o-transition: all 0.5s ease 0s;
+	transition: all 0.5s ease 0s;
+	background-image: url(images/bnt_universal.jpg);
+	display: block;
+	width: 270px;
+	height: 35px;
+	float: left;
+}
+.bnt_osaka {
+	-webkit-transition: all 0.5s ease 0s;
+	-o-transition: all 0.5s ease 0s;
+	transition: all 0.5s ease 0s;
+	background-image: url(images/bnt_osaka.jpg);
+	display: block;
+	width: 270px;
+	height: 35px;
+	float: left;
+}
+.bnt_castelo {
+	-webkit-transition: all 0.5s ease 0s;
+	-o-transition: all 0.5s ease 0s;
+	transition: all 0.5s ease 0s;
+	background-image: url(images/bnt_castelo.jpg);
+	display: block;
+	width: 270px;
+	height: 35px;
+	float: left;
+}
+.bnt_santuario {
+	-webkit-transition: all 0.5s ease 0s;
+	-o-transition: all 0.5s ease 0s;
+	transition: all 0.5s ease 0s;
+	background-image: url(images/bnt_santuario.jpg);
+	display: block;
+	width: 270px;
+	height: 35px;
+	float: left;
+}
+.bnt_tokyo:hover {
+	background-image: url(images/bnt_tokyo_hover.jpg);
+}
+.bnt_santuario:hover {
+	background-image: url(images/bnt_santuario_hover.jpg);
+}
+.bnt_castelo:hover {
+	background-image: url(images/bnt_castelo_hover.jpg);
+}
+.bnt_osaka:hover {
+	background-image: url(images/bnt_osaka_hover.jpg);
+}
+.bnt_universal:hover {
+	background-image: url(images/bnt_universal_hover.jpg);
+}
+.bnt_disneyland:hover {
+	background-image: url(images/bnt_disneyland_hover.jpg);
+}
+</style>
+</head>
+
+<body>
+<div id="container">
+  <div id="cabecalho"><a href="index.html"><img src="images/Logo Amaterasu.png" width="127" height="151" alt=""/></a></div>
+  <div id="menu">
+    <ul>
+   	  <li><a href="viagens.html">Viagens</a></li>
+      <li>Galeria
+      <ul> 
+          <li><a href="festival.html">Festival</a></li>
+              <li><a href="exposicao.html">Exposição</a></li>
+		</ul>
+     </li>   
+      <li><a href="dicas.html">Dicas </a></li>
+      <li><a href="contatos.html">Contatos</a></li>
+    </ul>
+  </div>
+
+  <div id="slider">
+    <div id="slider1_container" jssor-slider="true"> <!-- Jssor Slider INÍCIO -->
+    <div u="loading" class="loader"> <!-- Ícone de Loading -->
+        <div class="load_block"></div>
+        <div class="load_img"></div>
+    </div>
+    <div u="slides" class="slides"> <!-- Container dos Slides -->
+        <div><a href="#" target="_blank"><img u="image" src="images/slider01.jpg" /></a></div>
+        <div><a href="#" target="_blank"><img u="image" src="images/slider02.jpg" /></a></div>
+        <div><a href="#" target="_blank"><img u="image" src="images/slider03.jpg" /></a></div>
+    </div>
+    <div u="navigator" class="jssorb21"> <!-- Navegação por Bullets INÍCIO -->
+        <div u="prototype"></div> <!-- bullet navigator item prototype -->
+    </div> <!-- Navegação por Bullets FIM -->
+    <!-- Navegação por Setas INÍCIO -->
+    <span u="arrowleft" class="jssora21l"></span> <!-- Seta Direita -->
+    <span u="arrowright" class="jssora21r"></span> <!-- Seta Esquerda -->
+    <!-- Navegação por Setas FIM -->
+</div> <!-- Jssor Slider FIM -->
+
+
+  
+  </div>
+  <div id="colunaE">
+    <h3>Parques e Cidades</h3>
+    <p><img src="images/img_tokyo_site.jpg" width="270" height="190" alt=""/></p>
+    <div class="bnt_tokyo" id="bnt_tokyo">
+    <p>Cidade de Tokyo</p>
+    <a href="#">
+    <h6>Saiba mais + </h6>
+    </a>    </div>
+    <p><img src="images/img_universal_site.jpg" width="270" height="190" alt=""/>&nbsp;</p>
+    <div class="bnt_universal" id="bnt_universal">
+    <p>Universal Studios - Tokyo</p>
+    <a href="#">
+    <h6>Saiba mais + </h6>
+    </a>
+    </div>
+  </div>
+  <div id="colunaC">
+    <p><img src="images/img_disneyland_site.jpg" width="270" height="190" alt=""/></p>
+    <div class="bnt_disneyland" id="bnt_disneyland">
+    <p>Disneyland - Tokyo</p>
+   <a href="#">
+    <h6>Saiba mais + </h6>
+    </a>
+    </div>
+    <p><img src="images/img_osaka_site.jpg" width="270" height="189" alt=""/></p>
+    <div class="bnt_osaka" id="bnt_osaka">
+    <p>Cidade de Osaka</p>
+    <a href="#">
+    <h6>Saiba mais + </h6>
+    </a>
+    </div>
+  </div>
+  <div id="colunaD">
+    <h3>Santuários e Castelos</h3>
+    <p><img src="images/img_castelo_site.jpg" width="270" height="190" alt=""/></p>
+    <div class="bnt_castelo" id="bnt_castelo">
+    <p>Castelo dos Samurais - Hiroshima</p>
+    <a href="#">
+    <h6>Saiba mais + </h6>
+    </a>
+    </div>
+    <p><img src="images/img_santuario_site.jpg" width="270" height="190" alt=""/></p>
+    <div class="bnt_santuario" id="bnt_santuario">
+    <p>Isumo Taisha - Santuário de Isumo</p>
+    <a href="#">
+    <h6>Saiba mais + </h6>
+    </a>
+    </div>
+  </div>
+  <div id="rodape">
+<div id="amaterasu2015">
+ <p>Amaterasu2015 - Todos os Direitos Reservados. </p> 
+ 
+</div>
+<div id="social"><img src="images/img_social.jpg" alt="" width="85" height="25" usemap="#Map"/>
+      <map name="Map">
+          <area shape="rect" coords="3,3,25,23" href="https://www.facebook.com/" target="_blank">
+          <area shape="rect" coords="31,3,53,26" href="https://twitter.com/" target="_blank">
+          <area shape="rect" coords="61,5,85,24" href="https://accounts.google.com/" target="_blank">
+        </map>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
